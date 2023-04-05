@@ -1,20 +1,98 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 int extraMemoryAllocated;
 
-// implements heap sort
-// extraMemoryAllocated counts bytes of memory allocated
-void heapSort(int arr[], int n)
+void swap(int* a, int* b)
 {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
 }
 
+void heapify(int arr[], int n, int i) {
+    int largest = i;
+    int l= 2 * i + 1;
+    int r = 2 * i + 2;
+
+    if (l < n && arr[l] > arr[largest]) {
+        largest = l;
+    }
+    if (r < n && arr[r] > arr[largest]) {
+        largest = r;
+    }
+    if (largest != i) {
+        swap(&arr[i], &arr[largest]);
+        heapify(arr, n, largest);
+    }
+}
+
+// implements heap sort
+// extraMemoryAllocated counts bytes of memory allocated
+void heapSort(int arr[], int n) 
+{
+    int i;
+
+    for (i = n/2 - 1; i>=0; i--) {
+        heapify(arr, n, i);
+    }
+    for (i = n-1; i>=0; i--) {
+        swap(&arr[0], &arr[i]);
+        heapify(arr, i, 0);
+    }
+}
+
+void merge(int pData[], int leftIndex, int midIndex, int rightIndex) {
+	int i = 0, j = 0, k = leftIndex;
+    int newIndex1 = midIndex - leftIndex + 1,
+        newIndex2 = rightIndex - midIndex;
+    int *array1 = (int*)malloc(newIndex1*sizeof(int));
+	int *array2 = (int*)malloc(newIndex2*sizeof(int));
+
+	extraMemoryAllocated += newIndex1 * sizeof(int) + newIndex2 * sizeof(int);
+        array2[newIndex2];
+	
+    for(int i=0; i<newIndex1; i++)
+        array1[i] = pData[leftIndex+i];
+    for(int j=0; j<newIndex2; j++)
+        array2[j] = pData[midIndex+1+j];
+
+    while(i<newIndex1&&j<newIndex2){
+        if(array1[i]<=array2[j]){
+            pData[k] = array1[i];
+            i++;
+        }else{
+            pData[k] = array2[j];
+            j++;
+        }
+        k++;
+    }
+
+    while(i<newIndex1){
+        pData[k] = array1[i];
+        i++;
+        k++;
+    }
+
+    while(j<newIndex2){
+        pData[k] = array2[j];
+        j++;
+        k++;
+    }
+}
 
 // implement merge sort
 // extraMemoryAllocated counts bytes of extra memory allocated
 void mergeSort(int pData[], int l, int r)
 {
+	if(l<r){
+        int midIndex = l + (r - l) / 2;
+        mergeSort(pData, l, midIndex);
+        mergeSort(pData, midIndex+1, r);
+        merge(pData, l, midIndex, r);
+    }
 }
 
 // parses input file to an integer array
